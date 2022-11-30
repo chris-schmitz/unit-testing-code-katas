@@ -1,0 +1,5 @@
+# * Details on requirements.txt formats:
+# ? https://pip.pypa.io/en/stable/reference/requirements-file-format/
+# ? https://pip.pypa.io/en/stable/user_guide/#requirements-files
+
+pytest>=7.2.0
