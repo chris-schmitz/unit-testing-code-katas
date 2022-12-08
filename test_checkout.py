@@ -3,21 +3,34 @@ import pytest
 from checkout import Checkout
 
 
-@pytest.fixture
-def checkout():
-    return Checkout()
+class Fixtures:
+    @pytest.fixture
+    def checkout(self):
+        return Checkout()
 
 
-# def test_can_calculate_total(checkout):
-#     checkout.add_item_price("widget", 100)
-#     checkout.add_item("widget")
-#     assert checkout.calculate_total() == 100
+class TestRunner(Fixtures):
+    def test_can_get_correct_total_with_multiple_items(self, checkout):
+        checkout.add_item_price("candy", 5)
+        checkout.add_item_price("cereal", 15)
+        checkout.add_item("cereal")
+        checkout.add_item("candy")
 
+        assert checkout.calculate_total() == 20
 
-def test_can_get_correct_total_with_multiple_items(checkout):
-    checkout.add_item_price("candy", 5)
-    checkout.add_item_price("cereal", 15)
-    checkout.add_item("cereal")
-    checkout.add_item("candy")
+    def test_can_add_discount_rule(self, checkout):
+        checkout.add_discount("candy", 3, 2)
 
-    assert checkout.calculate_total() == 20
+    def test_can_apply_discount_rule(self, checkout):
+        checkout.add_item_price("candy", 10)
+        checkout.add_discount("candy", 3, 2)
+        checkout.add_item("candy")
+        checkout.add_item("candy")
+        checkout.add_item("candy")
+
+        assert checkout.calculate_total() == 2
+
+    def test_exception_with_bad_item(self, checkout):
+        from checkout import NoPriceException
+        with pytest.raises(NoPriceException):
+            checkout.add_item("tacos")
